@@ -1,12 +1,62 @@
 <script>
 import emitter from 'tiny-emitter/instance'
-import Cursor from '/src/scripts/Cursor'
+import { gsap } from 'gsap'
+import { lerp, getMousePos } from '/src/scripts/Utils'
 
 export default {
 
     mounted() {
-        const cursor = new Cursor(this.$refs.cursor, this.$refs.circle, this.$refs.star, emitter)
-    }
+
+		emitter.on('enter', () => this.enter())
+        emitter.on('leave', () => this.leave())
+
+        this.DOM = {
+            cursor: this.$refs.cursor,
+            circle: this.$refs.circle,
+            star: this.$refs.star
+        }
+
+		// Mouse tracking
+		this.mouse = {x: 0, y: 0}
+		window.addEventListener('mousemove', ev => this.mouse = getMousePos(ev))
+        
+        this.bounds = this.DOM.cursor.getBoundingClientRect()
+        
+        this.renderedStyles = {
+            tx: {previous: 0, current: 0, amt: 0.2},
+            ty: {previous: 0, current: 0, amt: 0.2}
+        };
+
+        this.onMouseMoveEv = () => {
+            this.renderedStyles.tx.previous = this.renderedStyles.tx.current = this.mouse.x - this.bounds.width/2;
+            this.renderedStyles.ty.previous = this.renderedStyles.ty.previous = this.mouse.y - this.bounds.height/2;
+            
+            requestAnimationFrame(() => this.render());
+            window.removeEventListener('mousemove', this.onMouseMoveEv);
+        };
+        window.addEventListener('mousemove', this.onMouseMoveEv);
+    },
+
+	methods: {
+		enter() {
+			gsap.to(this.DOM.circle, {duration: .4, ease: 'Power3.easeOut', scale: .4});
+			gsap.to(this.DOM.star, {duration: .4, ease: 'Power3.easeOut', scale: 1.4});
+		},
+		leave() {
+			gsap.to(this.DOM.circle, {duration: .4, ease: 'Power3.easeOut', scale: 1});
+			gsap.to(this.DOM.star, {duration: .4, ease: 'Power3.easeOut', scale: 1});
+		},
+		render() {
+			this.renderedStyles['tx'].current = this.mouse.x - this.bounds.width/2;
+			this.renderedStyles['ty'].current = this.mouse.y - this.bounds.height/2;
+			for (const key in this.renderedStyles ) {
+				this.renderedStyles[key].previous = lerp(this.renderedStyles[key].previous, this.renderedStyles[key].current, this.renderedStyles[key].amt);
+			}
+			this.DOM.cursor.style.transform = `translateX(${(this.renderedStyles['tx'].previous)}px) translateY(${this.renderedStyles['ty'].previous}px)`;
+
+			requestAnimationFrame(() => this.render());
+		}
+	}
 }
 </script>
 

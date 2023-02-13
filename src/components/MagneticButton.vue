@@ -37,7 +37,9 @@ export default {
         this.calculateSizePosition()
         this.initEvents()
 
-        requestAnimationFrame(() => this.render());
+		if(!navigator.userAgentData.mobile) {
+			requestAnimationFrame(() => this.render())
+		}
     },
 
 	methods: {

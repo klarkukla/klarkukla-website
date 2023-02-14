@@ -9,14 +9,14 @@ export default {
         const horizon = 300
 
         const scene = new THREE.Scene()
-        scene.fog = new THREE.FogExp2(0x023D19, 0.01)
+        scene.fog = new THREE.FogExp2(0xFF8A00, 0.01)
         const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, horizon)
         camera.position.set(0, 5, 0)
         //camera.lookAt(0, 0, 0)
 
         const renderer = new THREE.WebGLRenderer({antialias: true})
         renderer.setSize(window.innerWidth, window.innerHeight)
-        renderer.setClearColor(0x023D19)
+        renderer.setClearColor(0xFF8A00)
         this.$refs.three.appendChild(renderer.domElement)
 
         const map = new THREE.TextureLoader().load(smiley)

@@ -1,47 +1,47 @@
 <script>
 import * as THREE from 'three'
-import smiley from '/src/assets/images/smiley.png'
+import gemSprite from '/src/assets/images/gem.png'
 
 export default {
     mounted() {
 
-        const lines = []
+        const gems = []
         const horizon = 300
 
         const scene = new THREE.Scene()
-        scene.fog = new THREE.FogExp2(0xFF8A00, 0.01)
+        scene.fog = new THREE.FogExp2(0xEAEAEA, 0.01)
         const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, horizon)
         camera.position.set(0, 5, 0)
         //camera.lookAt(0, 0, 0)
 
         const renderer = new THREE.WebGLRenderer({antialias: true})
         renderer.setSize(window.innerWidth, window.innerHeight)
-        renderer.setClearColor(0xFF8A00)
+        renderer.setClearColor(0xEAEAEA)
         this.$refs.three.appendChild(renderer.domElement)
 
-        const map = new THREE.TextureLoader().load(smiley)
+        const map = new THREE.TextureLoader().load(gemSprite)
         const material = new THREE.SpriteMaterial({map: map})
 
         for(var i = 0; i < 80; i++){
-            let line = new THREE.Sprite(material)
-            line.position.set(Math.random() * 50 - 50/2, Math.random() * 50 - 50/2, ((Math.random() * horizon)-horizon))
-            lines.push(line)
-            scene.add(line)
+            let gem = new THREE.Sprite(material)
+            gem.position.set(Math.random() * 50 - 50/2, Math.random() * 50 - 50/2, ((Math.random() * horizon)-horizon))
+            gems.push(gem)
+            scene.add(gem)
         }
 
-        function animate(time) {
-            requestAnimationFrame( animate )
+        function update(time) {
+            requestAnimationFrame(update)
 
-            for(var i = 0; i < lines.length; i++) {
-                let line = lines[i]
-                line.position.z += 1
-                if(line.position.z > camera.position.z) {
-                    line.position.z = camera.position.z - ((Math.random() * horizon)+horizon)
+            for(var i = 0; i < gems.length; i++) {
+                let gem = gems[i]
+                gem.position.z += .4
+                if(gem.position.z > camera.position.z) {
+                    gem.position.z = camera.position.z - ((Math.random() * horizon)+horizon)
                 }
             }
-            renderer.render( scene, camera )
+            renderer.render(scene, camera)
         }
-        animate()
+        update()
     }
 }
 </script>
